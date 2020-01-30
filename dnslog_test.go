@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-var mockLog = "../test/logs/dnsmasq.log"
+var mockLog = "./testdata/logs/dnsmasq.log"
 
 func TestReadAndParseDNSNoFile(t *testing.T) {
 	//make a file in the file system (remember to remove it)
@@ -20,7 +20,7 @@ func TestReadAndParseDNSNoFile(t *testing.T) {
 }
 
 func TestReadAndParseDNS(t *testing.T) {
-	testfile := "../test/logs/dnsmasq.log"
+	testfile := "./testdata/logs/dnsmasq.log"
 	ret, _ := readAndParseDNS(testfile)
 	fmt.Println(len(ret["pixiedust.buzzfeed.com"]))
 }
@@ -67,7 +67,7 @@ func TestParseLogReply(t *testing.T) {
 }
 func BenchmarkReadAndParse(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		testfile := "../test/logs/dnsmasq.log"
+		testfile := "./testdata/logs/dnsmasq.log"
 		readAndParseDNS(testfile)
 	}
 

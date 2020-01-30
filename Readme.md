@@ -2,6 +2,8 @@
 
 This is taken from the router subdirectory of https://github.com/umamiMike/maslow
 
+The Makefile includes building and deploying for the WRT architecture.
+
 # Overview
 
 The notion is that half of the code in this system runs on your wifi router.
@@ -21,22 +23,12 @@ network are what, and assign basic policies to them:
 The permission-based access nodes get access to the Internet for thirty (30)
 minutes at a time.
 
-The idea here is that someone on your network says, "I'd
-like to use the Internet for a while." and you, as their friend say, "Cool, I
-know you've done your work and have gotten lots of exercise today, so go
-ahead and use it for half an hour!" Then you pull out your smartphone,
-navigate to a web address you have bookmarked (or possibly open an app), find
-your friend's device in the list, and tap "grant permission." Your friend now
-has open access for that amount of time.
-
-Should your friend want more access after their time is up, they have to ask you
-again. It makes sure that you all understand how much time is being used and
-that they are spending their time wisely.
+The idea here is that someone on your network says, "I'd like to use the Internet for a while." and you, as their friend say, "Cool, I know you've done your work and have gotten lots of exercise today, so go ahead and use it for half an hour!" Then you pull out your smartphone, navigate to a web address you have bookmarked (or possibly open an app), find your friend's device in the list, and tap "grant permission." Your friend now has open access for that amount of time.  Should your friend want more access after their time is up, they have to ask you again. It makes sure that you all understand how much time is being used and that they are spending their time wisely.
 
 
 ## Set up the router
 
-1. you will have to generate a secret.json file from firebase into the secrets directory.
+1. you will have to generate a secret.json file from firebase into the ./secrets directory.
 
 
 ## Set up crontab
