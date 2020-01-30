@@ -1,10 +1,12 @@
-![build-status](https://travis-ci.org/umamiMike/maslow.svg?branch=master)
+<!--![build-status](https://travis-ci.org/umamiMike/maslow.svg?branch=master)-->
+
+This is taken from the router subdirectory of https://github.com/umamiMike/maslow
 
 # Overview
 
 The notion is that half of the code in this system runs on your wifi router.
 This is meant to be used on a [ddwrt](http://www.dd-wrt.com/site/index) router
-that can run a go binary, and has iptables support. 
+that can run a go binary, and has iptables support.
 
 This code frequently checks with your admin site for rules to implement. It also reports up to the website any and all
 MAC addresses that are connected to it. The notion here is that the
@@ -17,7 +19,7 @@ network are what, and assign basic policies to them:
 - Permission-based access
 
 The permission-based access nodes get access to the Internet for thirty (30)
-minutes at a time. 
+minutes at a time.
 
 The idea here is that someone on your network says, "I'd
 like to use the Internet for a while." and you, as their friend say, "Cool, I
