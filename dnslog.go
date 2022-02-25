@@ -43,12 +43,18 @@ func parseLog(s string) (string, string, error) {
 	return "", "", nil
 }
 
-func readAndParseDNS(filename string) (DNSMap, error) {
+//parse dns should take a pointer to 
+func ReadDNS(filename string) (DNSMap, error) {
 	g, err := os.Open(filename)
 	if err != nil {
 		fmt.Printf("error opening file: %v\n", err)
 		return nil, err
 	}
+	return ParseDNS(g)
+	
+
+}
+func ParseDNS(g *os.File ) (DNSMap, error) {
 
 	s := bufio.NewScanner(g)
 	output := make(DNSMap)
@@ -69,7 +75,10 @@ func readAndParseDNS(filename string) (DNSMap, error) {
 	return output, nil
 }
 
-func tailAndParseDNS(leaseDict LeaseDict, serverData ServerData, dnsMap DNSMap, filename string) {
+
+
+
+func tailAndParseDNS(leases Leases, serverData ServerData, dnsMap DNSMap, filename string) {
 	t, err := tail.TailFile(filename, tail.Config{Follow: true, Location: &tail.SeekInfo{Offset: 0, Whence: os.SEEK_END}})
 	siteCommands := generateSiteChains(serverData, dnsMap)
 	siteCommandLength := len(siteCommands)
@@ -97,7 +106,7 @@ func tailAndParseDNS(leaseDict LeaseDict, serverData ServerData, dnsMap DNSMap, 
 				if len(siteCommands) != siteCommandLength {
 					siteCommandLength = len(siteCommands)
 					log.Println("added command siteCommands", siteCommandLength)
-					implementIPTablesRules(leaseDict, serverData, dnsMap)
+					implementIPTablesRules(leases, serverData, dnsMap)
 				}
 			}
 		}

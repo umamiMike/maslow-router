@@ -22,13 +22,13 @@ type iptCommand struct {
 	mustSucceed bool
 }
 
-func generateDeviceChains(leaseDict LeaseDict, serverData ServerData) ([]iptCommand, []string) {
+func generateDeviceChains(leases Leases, serverData ServerData) ([]iptCommand, []string) {
 	var commands []iptCommand
 	var localAddresses []string
 	for mac, devicePolicyData := range serverData.Devices {
 		onLocalNetwork := false
 		var ipAddress string
-		for _, host := range leaseDict {
+		for _, host := range leases {
 			if host.Mac == mac {
 				onLocalNetwork = true
 				ipAddress = host.IP
@@ -160,7 +160,7 @@ func executeBatch(commands []iptCommand) {
 	log.Printf("Implemented %d\n", status)
 }
 
-func implementIPTablesRules(leaseDict LeaseDict, serverData ServerData, dnsMap DNSMap) {
+func implementIPTablesRules(leases Leases, serverData ServerData, dnsMap DNSMap) {
 	log.Println("Generating iptables rules...")
 	systemCommands := []iptCommand{
 		iptCommand{"-P FORWARD ACCEPT", true},
@@ -204,7 +204,7 @@ func implementIPTablesRules(leaseDict LeaseDict, serverData ServerData, dnsMap D
 		iptCommand{"-A FORWARD -i br0 -m state --state NEW -j ACCEPT", true},
 		iptCommand{"-A FORWARD -j DROP", true},
 	}
-	deviceCommands, localAddresses := generateDeviceChains(leaseDict, serverData)
+	deviceCommands, localAddresses := generateDeviceChains(leases, serverData)
 	policyCommands := generatePolicyChains(serverData, localAddresses)
 	siteCommands := generateSiteChains(serverData, dnsMap)
 	var commands []iptCommand
@@ -212,9 +212,6 @@ func implementIPTablesRules(leaseDict LeaseDict, serverData ServerData, dnsMap D
 	commands = append(commands, deviceCommands...)
 	commands = append(commands, siteCommands...)
 	commands = append(commands, policyCommands...)
-	// for _, command := range commands {
-	// 	fmt.Println(command)
-	// }
 	executeBatch(commands)
 	log.Println("rules updated")
 }

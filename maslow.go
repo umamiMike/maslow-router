@@ -1,11 +1,9 @@
 package main
 
 import (
-	"log"
-
 	"github.com/davecgh/go-spew/spew"
-
 	"github.com/spf13/cobra"
+	"log"
 )
 
 var rootCmd = &cobra.Command{
@@ -21,11 +19,11 @@ var cmdParseLeases = &cobra.Command{
 		if len(args) < 1 {
 			log.Fatalln("must supply the path to the dnsmasq.leases file")
 		}
-		leaseDict, err := readAndParseLeases(args[0])
+		leases, err := readAndParseLeases(args[0])
 		if err != nil {
 			log.Fatal("error parsing leases\n", err)
 		}
-		for _, host := range leaseDict {
+		for _, host := range leases {
 			host.add("devices")
 			log.Println(">> ", host.Name, host.IP, host.Mac)
 		}
@@ -40,7 +38,7 @@ var cmdParseDNS = &cobra.Command{
 		if len(args) < 1 {
 			log.Fatalln("must supply the path to the dnsmasq.log file")
 		}
-		dnsMap, err := readAndParseDNS(args[0])
+		dnsMap, err := ReadDNS(args[0])
 		if err == nil {
 			for _, set := range dnsMap {
 				spew.Dump(set)
@@ -50,6 +48,7 @@ var cmdParseDNS = &cobra.Command{
 }
 
 // Write script that scans dnsmasq.log output and builds a dictionary of names and IP addresses
+
 var cmdTailDNS = &cobra.Command{
 	Use:   "tail-dns",
 	Short: "Tail the system dnsmasq.log file and write to stdout",
@@ -85,12 +84,12 @@ var cmdIptables = &cobra.Command{
 			log.Fatalln("must supply the path to the dnsmasq.log AND dnsmasq.leases files")
 		}
 		log.Println("Parsing lease data...")
-		leaseDict, err := readAndParseLeases(args[1])
+		leases, err := readAndParseLeases(args[1])
 		if err != nil {
 			log.Fatal("error parsing lease data\n", err)
 		}
 		log.Println("Parsing DNS data...")
-		dnsMap, err := readAndParseDNS(args[0])
+		dnsMap, err := ReadDNS(args[0])
 		if err != nil {
 			log.Fatal("error parsing dns data\n", err)
 		}
@@ -99,9 +98,9 @@ var cmdIptables = &cobra.Command{
 		if err != nil {
 			log.Fatal("error downloading policies\n", err)
 		}
-		implementIPTablesRules(leaseDict, serverData, dnsMap)
+		implementIPTablesRules(leases, serverData, dnsMap)
 		if iptablesFollow {
-			tailAndParseDNS(leaseDict, serverData, dnsMap, args[0])
+			tailAndParseDNS(leases, serverData, dnsMap, args[0])
 		}
 	},
 }

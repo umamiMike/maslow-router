@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -24,10 +22,10 @@ func parseMasq(s string) (host, error) {
 	return output, nil
 }
 
-// LeaseDict provides a mapping of mac to host values
-type LeaseDict map[string]host
+// Leases provides a mapping of mac to host values
+type Leases map[string]host
 
-func readAndParseLeases(filename string) (LeaseDict, error) {
+func readAndParseLeases(filename string) (Leases, error) {
 	output := make(map[string]host)
 	q, err := os.Open(filename)
 	if err != nil {

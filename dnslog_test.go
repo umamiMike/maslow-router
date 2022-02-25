@@ -6,12 +6,30 @@ import (
 	"testing"
 )
 
-var mockLog = "./testdata/logs/dnsmasq.log"
+var mockLog = `Jun 10 17:50:00 dnsmasq[21796]: query[A] isatap.lan from 115.34.22.160
+Jun 10 17:50:00 dnsmasq[21796]: cached isatap.lan is NXDOMAIN-IPv4
+Jun 10 17:50:21 dnsmasq[21796]: query[A] isatap.lan from 115.34.22.160
+Jun 10 17:50:21 dnsmasq[21796]: cached isatap.lan is NXDOMAIN-IPv4
+Jun 10 17:50:31 dnsmasq[21796]: query[A] isatap.lan from 115.34.22.160
+Jun 10 17:50:31 dnsmasq[21796]: cached isatap.lan is NXDOMAIN-IPv4
+Jun 10 17:50:37 dnsmasq[21796]: query[A] isatap.lan from 115.34.22.160
+Jun 10 17:50:37 dnsmasq[21796]: cached isatap.lan is NXDOMAIN-IPv4
+Jun 10 17:50:40 dnsmasq[21796]: query[A] zyx.qq.com from 115.34.22.160
+Jun 10 17:50:40 dnsmasq[21796]: forwarded zyx.qq.com to 114.114.114.114
+Jun 10 17:50:40 dnsmasq[21796]: forwarded zyx.qq.com to 223.5.5.5
+Jun 10 17:50:40 dnsmasq[21796]: reply zyx.qq.com is 123.151.43.51
+Jun 10 17:50:40 dnsmasq[21796]: reply zyx.qq.com is 183.60.62.158
+Jun 10 17:50:40 dnsmasq[21796]: reply zyx.qq.com is 113.108.1.90
+Jun 10 17:50:42 dnsmasq[21796]: query[A] isatap.lan from 115.34.22.160
+Jun 10 17:50:42 dnsmasq[21796]: cached isatap.lan is NXDOMAIN-IPv4
+Jun 10 17:50:52 dnsmasq[21796]: query[A] isatap.lan from 115.34.22.160
+Jun 10 17:50:52 dnsmasq[21796]: cached isatap.lan is NXDOMAIN-IPv4
+Jun 10 17:50:58 dnsmasq[21796]: query[A] ic.wps.cn from 115.34.22.160 `
 
 func TestReadAndParseDNSNoFile(t *testing.T) {
 	//make a file in the file system (remember to remove it)
 	nonexistantfile := "nonexistant"
-	_, err := readAndParseDNS(nonexistantfile)
+	_, err := ReadDNS(nonexistantfile)
 	if err != nil {
 		expected := fmt.Sprintf("open %v: no such file or directory", nonexistantfile)
 		//t.Errorf("%v", err)
@@ -21,7 +39,7 @@ func TestReadAndParseDNSNoFile(t *testing.T) {
 
 func TestReadAndParseDNS(t *testing.T) {
 	testfile := "./testdata/logs/dnsmasq.log"
-	ret, _ := readAndParseDNS(testfile)
+	ret, _ := ReadDNS(testfile)
 	fmt.Println(len(ret["pixiedust.buzzfeed.com"]))
 }
 
@@ -68,14 +86,13 @@ func TestParseLogReply(t *testing.T) {
 func BenchmarkReadAndParse(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		testfile := "./testdata/logs/dnsmasq.log"
-		readAndParseDNS(testfile)
+		ReadDNS(testfile)
 	}
 
 }
 func BenchmarkParseLog(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		line := `Dec 31 16:01:45 dnsmasq[1301]: reply 2.pool.ntp.org is 45.127.112.2`
-
 		parseLog(line)
 	}
 
