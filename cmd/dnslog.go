@@ -14,7 +14,45 @@ import (
 )
 
 // DNSMap is a thing that keeps track of name-> ip mapping
+// "key": { "key": boolean }
 type DNSMap map[string]map[string]bool
+
+
+//parse dns should take a pointer to 
+func ReadDNS(filename string) (DNSMap, error) {
+	g, err := os.Open(filename)
+	if err != nil {
+		fmt.Printf("error opening file: %v\n", err)
+		return nil, err
+	}
+	return ParseDNS(g)
+	
+
+}
+
+//takes a pointer to a file
+//scands throught that file
+func ParseDNS(g *os.File ) (DNSMap, error) {
+
+	s := bufio.NewScanner(g)
+	output := make(DNSMap)
+	for s.Scan() {
+		logLine := s.Text()
+		key, value, err := parseLog(logLine)
+		if err == nil {
+			if key != "" {
+				_, ok := output[key]
+				if !ok {
+					output[key] = make(map[string]bool)
+				}
+				output[key][value] = true
+			}
+		}
+	}
+	g.Close()
+	return output, nil
+}
+
 
 func parseLog(s string) (string, string, error) {
 	splitstr := strings.Split(s, ": ")
@@ -42,39 +80,6 @@ func parseLog(s string) (string, string, error) {
 	}
 	return "", "", nil
 }
-
-//parse dns should take a pointer to 
-func ReadDNS(filename string) (DNSMap, error) {
-	g, err := os.Open(filename)
-	if err != nil {
-		fmt.Printf("error opening file: %v\n", err)
-		return nil, err
-	}
-	return ParseDNS(g)
-	
-
-}
-func ParseDNS(g *os.File ) (DNSMap, error) {
-
-	s := bufio.NewScanner(g)
-	output := make(DNSMap)
-	for s.Scan() {
-		logLine := s.Text()
-		key, value, err := parseLog(logLine)
-		if err == nil {
-			if key != "" {
-				_, ok := output[key]
-				if !ok {
-					output[key] = make(map[string]bool)
-				}
-				output[key][value] = true
-			}
-		}
-	}
-	g.Close()
-	return output, nil
-}
-
 
 
 

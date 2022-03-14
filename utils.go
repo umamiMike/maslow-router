@@ -20,14 +20,3 @@ func convertToSlice(t interface{}) []string {
 	}
 	return nil
 }
-
-/*
-func convertSetToSlice(input map[string]bool) []string {
-	output := []string
-	for key, value := range input {
-		fmt.Println(key, value)
-		output = output.append(value)
-	}
-	return output
-}
-*/
